@@ -204,7 +204,7 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
         }
     }
     @Composable
-    fun LanguageSelectorIcon() { // Dropdown Language Selector
+    public fun LanguageSelectorIcon() { // Dropdown Language Selector
         var expanded by remember {mutableStateOf(false)}
 
         Box {

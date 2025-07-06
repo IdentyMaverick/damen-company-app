@@ -1,5 +1,6 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,12 +10,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowOutward
+import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.Favorite
@@ -28,9 +36,13 @@ import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SentimentSatisfied
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -62,103 +74,133 @@ class HomeComponent(componentContext: ComponentContext) : ComponentContext by co
     fun Render() {
         var searchText by remember { mutableStateOf("") }
         val itemsList = listOf("A", "B", "C", "D", "E")
+        val scrollState = rememberScrollState()
 
-        Box(modifier = Modifier
+        Box(modifier = Modifier // Tüm ana ekran kapsıyan box.
             .fillMaxSize()){
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .background(AppColors.Primary)
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
             ) {
-                Box( // Damen lgosu ve yanındaki butonları tutan yer
+                Box( // Search Box üstünü kapsayan box.
                     modifier = Modifier
-                        .align(Alignment.Center)
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .height(56.dp)
+                        .height(200.dp)
+                        .background(AppColors.Primary)
                 ) {
-                    // Sol ikon
-                    IconButton(
-                        onClick = { /* expanded = true */ },
+                    Box( // Damen logosunu ve ikonları kapsayan box. Yatay düzlemde.
                         modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu Icon",
-                            tint = Color.White
-                        )
-                    }
-
-                    // Ortadaki logo
-                    Image(
-                        painter = getImagePainter(),
-                        contentDescription = "Damen Logo",
-                        modifier = Modifier
-                            .size(128.dp)
                             .align(Alignment.Center)
-                    )
-
-                    // Sağdaki ikonlar
-                    Row(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .height(56.dp)
                     ) {
-                        IconButton(onClick = { }, modifier = Modifier.size(40.dp)) {
-                            Icon(Icons.Default.Forum, contentDescription = null, tint = Color.White)
-                        }
-                        IconButton(onClick = { }, modifier = Modifier.size(40.dp)) {
-                            Icon(Icons.Default.Language, contentDescription = null, tint = Color.White)
+                        // Sol ikon
+                        IconButton(
+                            onClick = { /* expanded = true */ },
+                            modifier = Modifier
+                                .size(45.dp)
+                                .align(Alignment.CenterStart)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu Icon",
+                                tint = Color.White
+                            ) }
+                        // Ortadaki logo
+                        Image(
+                            painter = getImagePainter(),
+                            contentDescription = "Damen Logo",
+                            modifier = Modifier
+                                .size(128.dp)
+                                .align(Alignment.Center)
+                        )
+                        // Sağdaki ikonlar
+                        Row( // Sağdaki 2 ikonu ayrıca yatayda içeren row. Önemsiz.
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { }, modifier = Modifier.size(40.dp)) {
+                                Icon(Icons.Default.Forum, contentDescription = null, tint = Color.White)
+                            }
+                            IconButton(onClick = {  }, modifier = Modifier.size(40.dp)) {
+                                Icon(Icons.Default.Language, contentDescription = null, tint = Color.White)
+                            }
                         }
                     }
+                    Box(  // SearchBox ile bölen yatay çizgi box.
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(5.dp)
+                            .background(color = AppColors.Third)
+                            .align(Alignment.BottomCenter)
+                    )
                 }
-                Box(  // Çubuğun kendisi
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(5.dp)
-                        .background(color = AppColors.Third)
-                        .align(Alignment.BottomCenter)
-                )
-            }
 
-            // 🔽 SearchBox artık ana Box'ın DIŞINDA ve üstüne taşacak şekilde hizalanmış
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 180.dp) // Yüksekliğe göre ayarlayabilirsin
-                //.align(Alignment.Center)
-            ) {
-                SearchBox(
-                    query = searchText,
-                    onQueryChange = { searchText = it },
+                // 🔽 SearchBox artık ana boxın dışında ve üstüne taşacak şekilde hizalanmış.
+                Box( // İkinci SearchBox üstünü kapsayan box. Amacı çizginin ortasına koyabilmek.
                     modifier = Modifier
-                        .padding(horizontal = 24.dp)
                         .fillMaxWidth()
-                )
-            }
-            Box(modifier = Modifier
-                .background(color = AppColors.Third)
-                .padding(top = 270.dp)
-                .align(Alignment.Center)){ // Üst Tab Altı
+                        .offset(y = (-20).dp) // yukarı taş
+                    // Yüksekliğe göre ayarlayabilirsin
+                ) {
+                    SearchBox(
+                        query = searchText,
+                        onQueryChange = { searchText = it },
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth()
+                    )
+                }
+                Box(modifier = Modifier //
+                    .background(color = AppColors.Third)
+                    .align(Alignment.CenterHorizontally)){
+                }
                 Row(modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(horizontal = 15.dp)) {
+                    .align(Alignment.CenterHorizontally)) {
                     IconLazyRow()
                 }
-                Column(modifier = Modifier.background(Color.Red)) {
+                Column(modifier = Modifier.background(Color.Transparent)
+                    .align(alignment = Alignment.CenterHorizontally)) {
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("DAMEN HABER",
-                            color = AppColors.Primary)
+                            color = AppColors.Primary,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 20.dp),
+                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold))
                         Text("Tümünü Gör",
-                            style = TextStyle(color = Color.Gray),
-                            textDecoration = TextDecoration.Underline)
+                            style = TextStyle(color = AppColors.Third, fontSize = 12.sp, fontWeight = FontWeight.Bold),
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .clickable(onClick = {})
+                                .align(Alignment.Bottom))
+                    }
+                    Spacer(Modifier.size(20.dp))
+                    NewsLazyRow()
+                    Spacer(Modifier.size(20.dp))
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(horizontal = 15.dp)
+                        .background(color = AppColors.Primary, shape = RoundedCornerShape(10.dp))) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            Text("GÜNÜN MENÜSÜ",
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(top = 20.dp),
+                                style = TextStyle(color = Color.White, fontSize = 15.sp, letterSpacing = 3.sp, fontWeight = FontWeight.Bold))
+                        }
                     }
                 }
             }
-        }
 
+        }
     }
 
     @Composable
@@ -211,9 +253,9 @@ fun SearchBox(
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp)
+                .padding(15.dp),
+            horizontalArrangement = Arrangement.Center,
+            contentPadding = PaddingValues(start = 6.dp, end = 6.dp)
         ) {
             items(itemsList) { item ->
                 Column {
@@ -305,6 +347,58 @@ fun SearchBox(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         fontSize = 10.sp)
+                }
+            }
+        }
+    }
+    @Composable
+    fun NewsLazyRow() {
+        val newsList = listOf("A","B","C","D","E","F","G")
+
+        LazyColumn(
+            modifier = Modifier
+                .background(Color.Transparent)
+                .fillMaxWidth()
+                .height(200.dp)
+        ){
+            items(newsList) { item ->
+
+                Box(
+                    modifier = Modifier
+                        .clickable(onClick = {})
+                ){
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(onClick = { }, modifier = Modifier
+                                .padding(start = 20.dp)
+                                .size(40.dp)
+                                .background(Color.Transparent, shape = RoundedCornerShape(10.dp))
+                            ) {
+                                Icon(Icons.Default.RssFeed, contentDescription = null, tint = AppColors.Primary)
+                            }
+                            Text("6001 suya indirildi",
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(start = 20.dp),
+                                style = TextStyle(fontWeight = FontWeight.Bold))
+                            IconButton(onClick = { }, modifier = Modifier
+                                .padding(end = 20.dp)
+                                .size(40.dp)
+                                .background(Color.Transparent, shape = RoundedCornerShape(10.dp))
+                            ) {
+                                Icon(Icons.Default.ArrowRight, contentDescription = null, tint = AppColors.Primary)
+                            }
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp),
+                            DividerDefaults.Thickness,
+                            AppColors.Third
+                        )
+                    }
+
                 }
             }
         }
