@@ -1,14 +1,55 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+# 📱Damen Company App v0.1.0-dev
+## Kurumsal Haberleşme & Bilgilendirme Uygulaması
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Multiplatform-blueviolet?style=flat&logo=android)
+![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-orange?style=flat&logo=kotlin)
+![License](https://img.shields.io/badge/License-Apache%202.0-green)
 
+## 🚀 Proje Hakkında
+Damen Company App, Kotlin Multiplatform ve Jetpack Compose ile geliştirilen, firmanın iç iletişimini ve bilgilendirme süreçlerini tek bir uygulama altında toplamayı amaçlayan bir mobil uygulamadır.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Bu uygulama, çalışanların günlük menü, haberler, anketler, etkinlikler gibi içeriklere hızlıca ulaşmasını sağlarken; aynı zamanda QR ile hızlı geçişler, acil durum bildirimleri ve teknik destek talepleri gibi fonksiyonel özellikleri de sunar.
+
+## 🧩 Kullanılan Teknolojiler
+
+✅ Kotlin Multiplatform – Android & Desktop desteği
+
+✅ Jetpack Compose Multiplatform
+
+✅ Decompose – Navigation & Ekran yönetimi
+
+✅ Material3 UI
+
+✅ MVVM mimarisi
+
+✅ Git & GitHub üzerinden sürüm kontrolü
+
+✅ Açık kaynak geliştirme yaklaşımı
+
+### ✨ Özellikler
+
+🔍 Arama kutusu (SearchBox)
+
+📅 Günlük etkinlik ve haber listesi
+
+🍽️ Günlük yemek menüsü
+
+📊 Anket ve kullanıcı geri bildirimi
+
+🆘 IT ve Medikal destek talepleri
+
+📷 QR Kod tarayıcı entegrasyonu
+
+🌐 Çoklu dil desteği (planlanıyor)
+
+🔐 Kullanıcı bazlı giriş sistemi (yakında)
+
+📄 Lisans
+Bu proje Apache 2.0 ile lisanslanmıştır. Ticari kullanım veya başka bir şirkete uyarlanması için geliştirilmeye açık değildir.
+
+👨‍💻 Geliştirici
+
+Osman Deniz Savaş
+
+[osmandenizsavas.com](https://osmandenizsavas.com)
