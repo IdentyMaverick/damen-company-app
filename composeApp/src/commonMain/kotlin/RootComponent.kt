@@ -1,8 +1,6 @@
 import com.arkivanov.decompose.*
 import com.arkivanov.decompose.router.stack.*
 import com.arkivanov.decompose.value.Value
-import kotlinx.coroutines.*
-import kotlinx.serialization.serializer
 
 class RootComponent(
     componentContext: ComponentContext
@@ -27,12 +25,22 @@ class RootComponent(
                 navigation.replaceCurrent(Screen.Home)
             }))
 
-            is Screen.Home -> Child.Home(HomeComponent(context))
+            is Screen.Home -> Child.Home(HomeComponent(context,
+                onFeedbackClick = {
+                        navigation.replaceCurrent(Screen.Feedback)
+                    }
+                )
+            )
+            is Screen.Feedback -> Child.Feedbacks(Feedback(context,
+                onFeedbackLeft = {
+                    navigation.replaceCurrent(Screen.Home)
+                }))
         }
 
     sealed class Child {
         class Splash(val component: SplashComponent) : Child()
         class Login(val component: LoginComponent) : Child()
         class Home(val component: HomeComponent) : Child()
+        class Feedbacks(val component: Feedback) : Child()
     }
 }
