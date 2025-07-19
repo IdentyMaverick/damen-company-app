@@ -1,8 +1,6 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,11 +36,7 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SentimentSatisfied
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.SupervisedUserCircle
-import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -131,7 +125,7 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                             }
                         }
                     )
-                    HorizontalDivider(thickness = 1.dp, modifier = Modifier.padding(horizontal = 10.dp), color = AppColors.Third)
+                    HorizontalDivider(thickness = 1.dp, modifier = Modifier.padding(horizontal = 20.dp), color = AppColors.Third)
                     NavigationDrawerItem(
                         label = { Text("Uygulama Hakkında", fontSize = 17.sp) },
                         selected = false,
@@ -150,7 +144,7 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                             }
                         }
                     )
-                    HorizontalDivider(thickness = 1.dp, modifier = Modifier.padding(horizontal = 20.dp), color = AppColors.Third)
+                    HorizontalDivider(thickness = 1.dp, modifier = Modifier.padding(horizontal =20.dp), color = AppColors.Third)
                 }
             },
             scrimColor = AppColors.Primary
@@ -306,19 +300,20 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
             value = query,
             onValueChange = onQueryChange,
             modifier = modifier
-                .size(35.dp)
+                .height(48.dp)
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             placeholder = {
                 Text(
                     "ARA",
-                    fontSize = 10.sp
+                    fontSize = 12.sp
                 )
             },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search Icon"
+                    contentDescription = "Search Icon",
+                    tint = AppColors.Primary
                 )
             },
             trailingIcon = {
@@ -346,6 +341,7 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
     @Composable
     fun IconLazyRow() {
         val itemsList = listOf("A") // Temsili veri
+        var surveyButtonClicked by remember { mutableStateOf(false) }
 
         LazyRow(
             modifier = Modifier
@@ -359,7 +355,7 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                     IconButton(
                         onClick = { }, modifier = Modifier
                             .size(40.dp)
-                            .background(AppColors.Primary, shape = RoundedCornerShape(10.dp))
+                            .background(Color.Gray, shape = RoundedCornerShape(10.dp))
                     ) {
                         Icon(
                             Icons.Default.PriorityHigh,
@@ -378,7 +374,7 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                 Spacer(Modifier.size(15.dp))
                 Column {
                     IconButton(
-                        onClick = { }, modifier = Modifier
+                        onClick = { surveyButtonClicked = !surveyButtonClicked }, modifier = Modifier
                             .size(40.dp)
                             .background(AppColors.Primary, shape = RoundedCornerShape(10.dp))
                     ) {
@@ -500,6 +496,10 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                 }
             }
         }
+    if (surveyButtonClicked) {
+        openUrl("https://www.google.com/")
+        surveyButtonClicked = !surveyButtonClicked
+    }
     }
 
     @Composable

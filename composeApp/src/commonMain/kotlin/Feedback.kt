@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material.icons.filled.Api
 import androidx.compose.material.icons.filled.ArrowLeft
 import androidx.compose.material.icons.filled.Bolt
@@ -54,6 +55,8 @@ class Feedback(componentContext: ComponentContext, private val onFeedbackLeft: (
 
     @Composable
     fun Render() {
+        var selectedRating by remember { mutableStateOf(0) }
+        println("selectedRating is: $selectedRating")
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,7 +86,7 @@ class Feedback(componentContext: ComponentContext, private val onFeedbackLeft: (
                 ) {
                     IconButton(onClick = { onFeedbackLeft() }, modifier = Modifier.size(60.dp)) {
                         Icon(
-                            Icons.Default.ArrowLeft,
+                            Icons.AutoMirrored.Filled.ArrowLeft,
                             contentDescription = null,
                             tint = AppColors.Primary,
                             modifier = Modifier
@@ -103,50 +106,15 @@ class Feedback(componentContext: ComponentContext, private val onFeedbackLeft: (
                     .fillMaxWidth()
                     .padding(vertical = 5.dp)
             ) {
-                IconButton(onClick = {  }, modifier = Modifier.size(40.dp)) {
-                    Icon(
-                        Icons.Outlined.StarOutline,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp),
-                        tint = AppColors.Primary
-                    )
-                }
-                IconButton(onClick = {  }, modifier = Modifier.size(40.dp)) {
-                    Icon(
-                        Icons.Outlined.StarOutline,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp),
-                        tint = AppColors.Primary
-                    )
-                }
-                IconButton(onClick = {  }, modifier = Modifier.size(40.dp)) {
-                    Icon(
-                        Icons.Outlined.StarOutline,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp),
-                        tint = AppColors.Primary
-                    )
-                }
-                IconButton(onClick = {  }, modifier = Modifier.size(40.dp)) {
-                    Icon(
-                        Icons.Outlined.StarOutline,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp),
-                        tint = AppColors.Primary
-                    )
-                }
-                IconButton(onClick = {  }, modifier = Modifier.size(40.dp)) {
-                    Icon(
-                        Icons.Outlined.StarOutline,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp),
-                        tint = AppColors.Primary
-                    )
+                for (i in 1..5) {
+                    IconButton(onClick = { selectedRating = i }, modifier = Modifier.size(40.dp)) {
+                        Icon(
+                            imageVector = if (i <= selectedRating) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                            contentDescription = "Yıldız $i",
+                            modifier = Modifier.size(40.dp),
+                            tint = AppColors.Primary
+                        )
+                    }
                 }
             }
             HorizontalDivider(
@@ -156,21 +124,26 @@ class Feedback(componentContext: ComponentContext, private val onFeedbackLeft: (
                 color = AppColors.Third,
             )
         Text("Neleri iyileştirebiliriz?",
-            style = TextStyle(fontSize = 15.sp, color = AppColors.Primary),
+            style = TextStyle(fontSize = 15.sp, color = AppColors.Primary, fontWeight = FontWeight.Bold),
             modifier = Modifier
                 .padding(horizontal = 40.dp, vertical = 20.dp))
             CommentBox(
+                selectedRating = selectedRating,
                 onSend = {comment ->
                     println("Yeni yorum: $comment")
-                }
+                    selectedRating = 0
+                },
             )
         }
     }
     @Composable
     fun CommentBox(
+        selectedRating: Int,
         onSend: (String) -> Unit
+
     ) {
         var commentText by remember { mutableStateOf("") }
+        println("selectedRating2 is: $selectedRating")
 
         Column(
             modifier = Modifier
@@ -201,7 +174,7 @@ class Feedback(componentContext: ComponentContext, private val onFeedbackLeft: (
                         commentText = ""
                     }
                 },
-                enabled = commentText.isNotBlank(),
+                enabled = commentText.isNotBlank() && selectedRating >= 1,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 50.dp),
