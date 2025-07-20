@@ -38,6 +38,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SentimentSatisfied
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -68,6 +70,7 @@ import com.yourapp.design.AppColors
 import kotlinx.coroutines.launch
 import org.example.nazlican.getImagePainter
 import org.example.nazlican.getImagePainter2
+import org.example.nazlican.getLanguageIcon
 
 class HomeComponent(componentContext: ComponentContext, private val onFeedbackClick: () -> Unit) :
     ComponentContext by componentContext {
@@ -208,13 +211,8 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                                         tint = Color.White
                                     )
                                 }
-                                IconButton(onClick = { }, modifier = Modifier.size(40.dp)) {
-                                    Icon(
-                                        Icons.Default.Language,
-                                        contentDescription = null,
-                                        tint = Color.White
-                                    )
-                                }
+                                Spacer(Modifier.size(10.dp))
+                                LanguageSelectorIcon()
                             }
                         }
                         Box(  // SearchBox ile bölen yatay çizgi box.
@@ -569,6 +567,43 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                     }
 
                 }
+            }
+        }
+    }
+    @Composable
+    fun LanguageSelectorIcon() { // Dropdown Language Selector
+        var expanded by remember {mutableStateOf(false)}
+
+        Box {
+            IconButton(onClick = {expanded = true},
+                modifier = Modifier
+                    .size(45.dp)
+                    .padding(end = 20.dp)){
+                Icon(
+                    Icons.Default.Language,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = {expanded = false},
+                containerColor = AppColors.Third
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Türkçe",
+                        color = AppColors.Secondary)},
+                    onClick = {
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("English",
+                        color = AppColors.Secondary)},
+                    onClick = {
+                        expanded = false
+                    }
+                )
             }
         }
     }
