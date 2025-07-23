@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -47,6 +48,12 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            // material icons, we need arrow back icon for navigation button
+            implementation(compose.materialIconsExtended)
+            // decompose
+            implementation(libs.decompose)
+            implementation(libs.decompose.extensions.compose)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -67,7 +74,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1.0-dev"
     }
     packaging {
         resources {
