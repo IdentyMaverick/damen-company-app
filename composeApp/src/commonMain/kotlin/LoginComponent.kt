@@ -21,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.ComponentContext
 import com.yourapp.design.AppColors
+import io.ktor.client.engine.cio.CIO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -46,9 +48,9 @@ import kotlinx.coroutines.launch
 import org.example.nazlican.getImagePainter
 import org.example.nazlican.getImagePainter2
 import org.example.nazlican.getLanguageIcon
-import kotlin.math.exp
 
 class LoginComponent(componentContext: ComponentContext, private val onLoginSuccess: () -> Unit) : ComponentContext by componentContext {
+
     @Composable
     fun Render() {
         var username by remember { mutableStateOf("") }
@@ -87,6 +89,7 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
             )
         }
     }
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun LoginInputs(
         username: String,
@@ -99,6 +102,7 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
         var showErrorDialog by remember { mutableStateOf(false) }
         var isLoading by remember {mutableStateOf(false)}
         val coroutineScope = rememberCoroutineScope()
+        var errorMessageAlertDialog by remember { mutableStateOf<String>("") }
 
         if (showErrorDialog) {
             AlertDialog(
@@ -121,6 +125,24 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
             )
         }
 
+        if (errorMessageAlertDialog != "") {
+            AlertDialog(
+                onDismissRequest = { errorMessageAlertDialog = "" },
+                title = {Text("Hata",
+                    color = AppColors.Primary)},
+                text = { Text(text = errorMessageAlertDialog,
+                    color = AppColors.Primary) },
+                confirmButton = {
+                    Button(onClick = { errorMessageAlertDialog = "" },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AppColors.Third
+                        )) {
+                        Text("Tamam",
+                            color = AppColors.Primary)
+                    }
+                }
+            )
+        }
         Column {
             // Username
             OutlinedTextField(
@@ -175,16 +197,15 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
                 onClick = {
                     isLoading = true
                     coroutineScope.launch {
-                        delay(2000)
+                        val respond = ApiService.login(username,password)
 
-                    if (!isFormValid) {
-                        showErrorDialog = true
-                    } else if (
-                        username == "admin" && password == "1234"
-                    ) {
-                        showErrorDialog = false
-                        onLoginSuccess()
-                    } else showErrorDialog = true
+                            if (respond.success) {
+                                    onLoginSuccess()
+                                println("token is: ${respond.message}")
+                            } else if (!respond.success) {
+                            errorMessageAlertDialog = respond.message
+                            isLoading = false
+                            }
                     }
                 },
                 modifier = Modifier

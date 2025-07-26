@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -53,6 +54,14 @@ kotlin {
             // decompose
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
+            // Ktor HTTP Client core
+            implementation("io.ktor:ktor-client-core:3.2.2")
+            // Ktor HTTP Client CIO engine (ya da başka bir engine tercih edebilirsin)
+            implementation("io.ktor:ktor-client-cio:3.2.2")
+            // JSON serialization için (opsiyonel, eğer JSON serialize/deserialize yapacaksan)
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.4")
+            implementation("io.ktor:ktor-client-content-negotiation:3.2.2")
+            implementation("com.russhwolf:multiplatform-settings:1.3.0")
 
         }
         commonTest.dependencies {
@@ -62,6 +71,14 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
         }
+
+        val iosMain by creating {
+            dependsOn(commonMain as KotlinSourceSet)
+            dependencies {
+                implementation("com.russhwolf:multiplatform-settings:1.3.0")
+            }
+        }
+
     }
 }
 
