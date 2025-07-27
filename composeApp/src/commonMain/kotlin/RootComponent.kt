@@ -7,6 +7,8 @@ class RootComponent(
 ) : ComponentContext by componentContext {
 
     private val navigation = StackNavigation<Screen>()
+    val settings = getSettings()
+    val tokenSave = TokenSave(settings)
 
     val childStack: Value<ChildStack<Screen, Child>> = childStack(
         source = navigation,
@@ -17,13 +19,13 @@ class RootComponent(
 
     private fun createChild(screen: Screen, context: ComponentContext): Child =
         when (screen) {
-            is Screen.Splash -> Child.Splash(SplashComponent(context) {
+            is Screen.Splash -> Child.Splash(SplashComponent(context, onSplashFinished = {
                 navigation.replaceCurrent(Screen.Login)
-            })
+            }, tokenSave))
 
             is Screen.Login -> Child.Login(LoginComponent (context, onLoginSuccess = {
                 navigation.replaceCurrent(Screen.Home)
-            }))
+            }, tokenSave))
 
             is Screen.Home -> Child.Home(HomeComponent(context,
                 onFeedbackClick = {

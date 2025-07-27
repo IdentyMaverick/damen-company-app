@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +50,7 @@ import org.example.nazlican.getImagePainter
 import org.example.nazlican.getImagePainter2
 import org.example.nazlican.getLanguageIcon
 
-class LoginComponent(componentContext: ComponentContext, private val onLoginSuccess: () -> Unit) : ComponentContext by componentContext {
+class LoginComponent(componentContext: ComponentContext, private val onLoginSuccess: () -> Unit, private val tokenSave: TokenSave) : ComponentContext by componentContext {
 
     @Composable
     fun Render() {
@@ -201,6 +202,7 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
 
                             if (respond.success) {
                                     onLoginSuccess()
+                                tokenSave.token = respond.message
                                 println("token is: ${respond.message}")
                             } else if (!respond.success) {
                             errorMessageAlertDialog = respond.message

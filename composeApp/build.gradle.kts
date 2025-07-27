@@ -1,7 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -19,7 +18,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -30,55 +29,59 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
-    
+
     sourceSets {
-        val desktopMain by getting
-        
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-        }
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-            // material icons, we need arrow back icon for navigation button
-            implementation(compose.materialIconsExtended)
-            // decompose
-            implementation(libs.decompose)
-            implementation(libs.decompose.extensions.compose)
-            // Ktor HTTP Client core
-            implementation("io.ktor:ktor-client-core:3.2.2")
-            // Ktor HTTP Client CIO engine (ya da başka bir engine tercih edebilirsin)
-            implementation("io.ktor:ktor-client-cio:3.2.2")
-            // JSON serialization için (opsiyonel, eğer JSON serialize/deserialize yapacaksan)
-            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.4")
-            implementation("io.ktor:ktor-client-content-negotiation:3.2.2")
-            implementation("com.russhwolf:multiplatform-settings:1.3.0")
-
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
-        }
-
-        val iosMain by creating {
-            dependsOn(commonMain as KotlinSourceSet)
+        val commonMain by getting {
             dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+                implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.androidx.lifecycle.runtimeCompose)
+                implementation(compose.materialIconsExtended)
+                implementation(libs.decompose)
+                implementation(libs.decompose.extensions.compose)
+                // Ktor
+                implementation("io.ktor:ktor-client-core:3.2.2")
+                implementation("io.ktor:ktor-client-content-negotiation:3.2.2")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.2")
+                implementation("io.ktor:ktor-client-cio:3.2.2")
+                // Multiplatform Settings
                 implementation("com.russhwolf:multiplatform-settings:1.3.0")
             }
         }
 
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+            }
+        }
+
+        // iOS ortak katman
+        val iosMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:3.2.2")
+                implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
+            }
+        }
+
+        val iosX64Main by getting { dependsOn(iosMain) }
+        val iosArm64Main by getting { dependsOn(iosMain) }
+        val iosSimulatorArm64Main by getting { dependsOn(iosMain) }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutinesSwing)
+            }
+        }
     }
 }
 
