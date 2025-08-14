@@ -29,6 +29,7 @@ import org.example.nazlican.getVersionNumber
 class SplashComponent(
     componentContext: ComponentContext,
     val onSplashFinished: () -> Unit,
+    val onSplashFinished2: () -> Unit,
     private val tokenSave: TokenSave
 ) : ComponentContext by componentContext {
 
@@ -37,7 +38,7 @@ class SplashComponent(
         CoroutineScope(Dispatchers.Main).launch {
             if (!tokenSave.token.isNullOrBlank()) {
                 delay(3000)
-                onSplashFinished()
+                onSplashFinished2()
             } else {
             delay(3000) // 3 saniye sonra geçiş yapılır
             onSplashFinished()

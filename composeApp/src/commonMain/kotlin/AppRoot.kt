@@ -11,5 +11,8 @@ fun AppRoot(root: RootComponent) {
         is RootComponent.Child.Login -> child.component.Render()
         is RootComponent.Child.Home -> child.component.Render()
         is RootComponent.Child.Feedbacks -> child.component.Render()
+        is RootComponent.Child.ITSupports -> child.component.Render()
+        is RootComponent.Child.ITSupportsDetail -> child.component.Render()
+
     }
 }

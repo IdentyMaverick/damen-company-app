@@ -1,29 +1,36 @@
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.Devices
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
@@ -36,6 +43,8 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SentimentSatisfied
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
@@ -61,6 +70,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -72,7 +82,7 @@ import org.example.nazlican.getImagePainter
 import org.example.nazlican.getImagePainter2
 import org.example.nazlican.getLanguageIcon
 
-class HomeComponent(componentContext: ComponentContext, private val onFeedbackClick: () -> Unit) :
+class HomeComponent(componentContext: ComponentContext, private val onFeedbackClick: () -> Unit, private val onLogOut: () -> Unit, private val onITSupportClick: () -> Unit) :
     ComponentContext by componentContext {
     @Composable
     fun Render() {
@@ -148,6 +158,24 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                         }
                     )
                     HorizontalDivider(thickness = 1.dp, modifier = Modifier.padding(horizontal =20.dp), color = AppColors.Third)
+                    NavigationDrawerItem(
+                        label = { Text("Çıkış Yap", fontSize = 17.sp, color = Color.Red, fontWeight = FontWeight.ExtraBold) },
+                        selected = false,
+                        onClick = { onLogOut() },
+                        icon = {
+                            IconButton(
+                                onClick = { scope.launch { drawerState.open() } },
+                                modifier = Modifier
+                                    .size(45.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                    contentDescription = "Info Icon",
+                                    tint = AppColors.Primary
+                                )
+                            }
+                        }
+                    )
                 }
             },
             scrimColor = AppColors.Primary
@@ -160,7 +188,6 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(scrollState)
                 ) {
                     Box( // Search Box üstünü kapsayan box.
                         modifier = Modifier
@@ -279,7 +306,8 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                             )
                         }
                         Spacer(Modifier.size(20.dp))
-                        NewsLazyRow()
+                        HorizontalDivider(thickness = 2.dp, modifier = Modifier.padding(horizontal = 10.dp), color = AppColors.Third)
+                        NewsLazyColumn()
                         Spacer(Modifier.size(20.dp))
                     }
                 }
@@ -394,28 +422,6 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                 Column {
                     IconButton(
                         enabled = false,
-                        onClick = {  }, modifier = Modifier
-                            .size(40.dp)
-                            .background(Color.Gray, shape = RoundedCornerShape(10.dp))
-                    ) {
-                        Icon(
-                            Icons.Default.Restaurant,
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Text(
-                        "Yemek\nListesi",
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        fontSize = 10.sp
-                    )
-                }
-                Spacer(Modifier.size(15.dp))
-                Column {
-                    IconButton(
-                        enabled = false,
                         onClick = { }, modifier = Modifier
                             .size(40.dp)
                             .background(Color.Gray, shape = RoundedCornerShape(10.dp))
@@ -455,10 +461,10 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
                 Spacer(Modifier.size(15.dp))
                 Column {
                     IconButton(
-                        enabled = false,
-                        onClick = { }, modifier = Modifier
+                        enabled = true,
+                        onClick = { onITSupportClick() }, modifier = Modifier
                             .size(40.dp)
-                            .background(Color.Gray, shape = RoundedCornerShape(10.dp))
+                            .background(AppColors.Primary, shape = RoundedCornerShape(10.dp))
                     ) {
                         Icon(Icons.Default.Devices, contentDescription = null, tint = Color.White)
                     }
@@ -501,75 +507,35 @@ class HomeComponent(componentContext: ComponentContext, private val onFeedbackCl
     }
 
     @Composable
-    fun NewsLazyRow() {
-        val newsList = listOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L")
-
-        LazyColumn(
-            modifier = Modifier
-                .background(Color.Transparent)
-                .fillMaxWidth()
-                .height(500.dp)
-        ) {
-            items(newsList) { item ->
-
-                Box(
-                    modifier = Modifier
-                        .clickable(onClick = {})
-                ) {
-                    Column {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = { }, modifier = Modifier
-                                    .padding(start = 20.dp)
-                                    .size(40.dp)
-                                    .background(
-                                        Color.Transparent,
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                            ) {
-                                Icon(
-                                    Icons.Default.RssFeed,
-                                    contentDescription = null,
-                                    tint = AppColors.Third
-                                )
-                            }
-                            Text(
-                                "6001 suya indirildi",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(start = 20.dp),
-                                style = TextStyle(fontWeight = FontWeight.Bold)
-                            )
-                            IconButton(
-                                onClick = { }, modifier = Modifier
-                                    .padding(end = 20.dp)
-                                    .size(40.dp)
-                                    .background(
-                                        Color.Transparent,
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowRight,
-                                    contentDescription = null,
-                                    tint = AppColors.Primary
-                                )
+    fun NewsLazyColumn() {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = 10.dp),
+                contentPadding = PaddingValues(horizontal = 15.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(listOf("A", "B", "C")) { item ->
+                    Card(
+                        modifier = Modifier
+                            .height(200.dp)
+                            .clickable(onClick = {}),
+                        elevation = CardDefaults.cardElevation(10.dp),
+                        border = BorderStroke(width = 5.dp, color = AppColors.Primary),
+                        colors = CardDefaults.cardColors(containerColor = AppColors.Secondary)
+                    ) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(0.dp)) {
+                            Box(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).background(color = AppColors.Primary).height(50.dp ),
+                                contentAlignment = Alignment.Center) {
+                                Text(item, color = AppColors.Secondary)
                             }
                         }
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .padding(horizontal = 20.dp),
-                            DividerDefaults.Thickness,
-                            AppColors.Third
-                        )
                     }
-
+                    Spacer(Modifier.size(20.dp))
                 }
             }
-        }
     }
+
+
     @Composable
     fun LanguageSelectorIcon() { // Dropdown Language Selector
         var expanded by remember {mutableStateOf(false)}
