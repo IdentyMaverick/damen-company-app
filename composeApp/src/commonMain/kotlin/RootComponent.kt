@@ -1,7 +1,19 @@
+import Screens.Feedback
+import Screens.HomeComponent
+import Screens.ITSupport
+import Screens.ITSupportsDetails
+import Screens.LoginComponent
+import Screens.NewsDetails
+import Screens.SplashComponent
 import com.arkivanov.decompose.*
 import com.arkivanov.decompose.router.stack.*
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+
+
+
+
+import Screens.EventCalendar
 
 class RootComponent(
     componentContext: ComponentContext
@@ -31,37 +43,79 @@ class RootComponent(
         when (screen) {
             is Screen.Splash -> Child.Splash(SplashComponent(context, onSplashFinished = {
                 navigation.replaceCurrent(Screen.Login)
-            }, onSplashFinished2 = {navigation.replaceCurrent(Screen.Home)},tokenSave))
+            }, onSplashFinished2 = { navigation.replaceCurrent(Screen.Home) }, tokenSave))
 
-            is Screen.Login -> Child.Login(LoginComponent (context, onLoginSuccess = {
+            is Screen.Login -> Child.Login(LoginComponent(context, onLoginSuccess = {
                 navigation.replaceCurrent(Screen.Home)
             }, tokenSave))
 
-            is Screen.Home -> Child.Home(HomeComponent(context,
+            is Screen.Home -> Child.Home(
+                HomeComponent(
+                    context,
                 onFeedbackClick = {
-                        navigation.replaceCurrent(Screen.Feedback)
-                    }, onLogOut = {navigation.replaceCurrent(Screen.Login)
-                    tokenSave.token = null},
+                    navigation.replaceCurrent(Screen.Feedback)
+                }, onLogOut = {
+                    navigation.replaceCurrent(Screen.Login)
+                    tokenSave.token = null
+                },
                 onITSupportClick = {
                     navigation.replaceCurrent(Screen.ITSupport)
-                }
+                },
+                    onClickNewsDetail = { newsId ->
+                        navigation.replaceCurrent( Screen.News( newsId ) ) },
+                    onClickEventCalendar = {
+                        navigation.replaceCurrent(Screen.EventCalendars)
+                    }
+            )
+            )
+            is Screen.Feedback -> Child.Feedbacks(
+                Feedback(
+                    context,
+                    onFeedbackLeft = {
+                        navigation.replaceCurrent(Screen.Home)
+                    })
+            )
+
+            is Screen.ITSupport -> Child.ITSupports(
+                ITSupport(
+                    context,
+                    onITSupportLeft = {
+                        navigation.replaceCurrent(Screen.Home)
+                    },
+                    onITSupportButton = { id, description ->
+                        navigation.push(Screen.ITSupportsDetails(id, description))
+                    })
+            )
+            is Screen.ITSupportsDetails -> Child.ITSupportsDetail(
+                ITSupportsDetails(
+                    context,
+                    screen.questionsId,
+                    onFeedbackLefts = {
+                        navigation.pop()
+                    },
+                    screen.questionsDescription
                 )
             )
-            is Screen.Feedback -> Child.Feedbacks(Feedback(context,
-                onFeedbackLeft = {
-                    navigation.replaceCurrent(Screen.Home)
-                }))
-
-            is Screen.ITSupport -> Child.ITSupports(ITSupport(context,
-                onITSupportLeft = {
-                    navigation.replaceCurrent(Screen.Home)
+            is Screen.News -> Child.News(
+                component = NewsDetails(
+                    componentContext = context,
+                    newsId = screen.newsId, // Haber id parametresini geçir
+                    onNewsDetailsBack = {
+                        navigation.replaceCurrent(Screen.Home) // Detaydan geri dönerken stack’i pop et
+                    }
+                )
+            )
+        is Screen.EventCalendars -> Child.EventCalendars (
+            component = EventCalendar(
+                componentContext = context,
+                onEventCalendarBack = {
+                    navigation.replaceCurrent( Screen.Home )
                 },
-                onITSupportButton = { id, description ->
-                    navigation.push(Screen.ITSupportsDetails(id, description))
-                }))
-            is Screen.ITSupportsDetails -> Child.ITSupportsDetail(ITSupportsDetails(context, screen.questionsId, onFeedbackLefts = {
-                navigation.pop()
-            }, screen.questionsDescription))
+                onFeedbackClick = {
+                    navigation.replaceCurrent(Screen.Feedback)
+                }
+            )
+        )
         }
 
     sealed class Child {
@@ -71,5 +125,7 @@ class RootComponent(
         class Feedbacks(val component: Feedback) : Child()
         class ITSupports(val component: ITSupport) : Child()
         class ITSupportsDetail(val component: ITSupportsDetails) : Child()
+        class News(val component: NewsDetails) : Child()
+        class EventCalendars(val component: EventCalendar) : Child()
     }
 }

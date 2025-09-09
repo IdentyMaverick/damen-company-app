@@ -13,6 +13,7 @@ fun AppRoot(root: RootComponent) {
         is RootComponent.Child.Feedbacks -> child.component.Render()
         is RootComponent.Child.ITSupports -> child.component.Render()
         is RootComponent.Child.ITSupportsDetail -> child.component.Render()
-
+        is RootComponent.Child.News -> child.component.Render()
+        is RootComponent.Child.EventCalendars -> child.component.Render()
     }
 }

@@ -1,7 +1,7 @@
+package Screens
+
+import TokenSave
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -28,7 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,12 +39,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.ComponentContext
 import com.yourapp.design.AppColors
-import io.ktor.client.engine.cio.CIO
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.example.nazlican.getImagePainter
 import org.example.nazlican.getImagePainter2
 import org.example.nazlican.getLanguageIcon
 
@@ -57,17 +50,21 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
 
-        Box(modifier = Modifier
-            .fillMaxSize(),
-            contentAlignment = Alignment.Center) {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)) {
+        Box(
+            modifier = Modifier.Companion
+                .fillMaxSize(),
+            contentAlignment = Alignment.Companion.Center
+        ) {
+            Column(
+                modifier = Modifier.Companion
+                    .fillMaxWidth()
+                    .align(Alignment.Companion.TopCenter)
+            ) {
                 Box(
-                    modifier = Modifier
+                    modifier = Modifier.Companion
                         .fillMaxWidth()
                         .padding(top = 50.dp),
-                    contentAlignment = Alignment.CenterEnd
+                    contentAlignment = Alignment.Companion.CenterEnd
                 ) {
                     LanguageSelectorIcon()
                 }
@@ -77,16 +74,16 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
             Image(
                 painter = getImagePainter2(),
                 contentDescription = "Damen Logo",
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .size(256.dp)
-                    .align(Alignment.TopCenter)
+                    .align(Alignment.Companion.TopCenter)
                     .padding(top = 50.dp)
             )
             LoginInputs(
                 username = username,
                 password = password,
-                onUsernameChange = {username = it},
-                onPasswordChange = {password = it}
+                onUsernameChange = { username = it },
+                onPasswordChange = { password = it }
             )
         }
     }
@@ -101,25 +98,39 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
         var passwordVisible by remember { mutableStateOf(false) }
         var isFormValid = username.isNotBlank() && password.isNotBlank()
         var showErrorDialog by remember { mutableStateOf(false) }
-        var isLoading by remember {mutableStateOf(false)}
+        var isLoading by remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
         var errorMessageAlertDialog by remember { mutableStateOf<String>("") }
 
         if (showErrorDialog) {
             AlertDialog(
-                onDismissRequest = {showErrorDialog = false},
-                title = {Text("Hata",
-                    color = AppColors.Secondary)},
-                text = {Text("Kullanıcı adı ve şifre boş veya hatalı",
-                    color = AppColors.Secondary)},
+                onDismissRequest = { showErrorDialog = false },
+                title = {
+                    Text(
+                        "Hata",
+                        color = AppColors.Secondary
+                    )
+                },
+                text = {
+                    Text(
+                        "Kullanıcı adı ve şifre boş veya hatalı",
+                        color = AppColors.Secondary
+                    )
+                },
                 confirmButton = {
-                    Button(onClick = {showErrorDialog = false
-                                     isLoading = false},
+                    Button(
+                        onClick = {
+                            showErrorDialog = false
+                            isLoading = false
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AppColors.Third
-                        )) {
-                        Text("Tamam",
-                            color = AppColors.Primary)
+                        )
+                    ) {
+                        Text(
+                            "Tamam",
+                            color = AppColors.Primary
+                        )
                     }
                 },
                 containerColor = AppColors.Primary
@@ -129,17 +140,29 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
         if (errorMessageAlertDialog != "") {
             AlertDialog(
                 onDismissRequest = { errorMessageAlertDialog = "" },
-                title = {Text("Hata",
-                    color = AppColors.Primary)},
-                text = { Text(text = errorMessageAlertDialog,
-                    color = AppColors.Primary) },
+                title = {
+                    Text(
+                        "Hata",
+                        color = AppColors.Primary
+                    )
+                },
+                text = {
+                    Text(
+                        text = errorMessageAlertDialog,
+                        color = AppColors.Primary
+                    )
+                },
                 confirmButton = {
-                    Button(onClick = { errorMessageAlertDialog = "" },
+                    Button(
+                        onClick = { errorMessageAlertDialog = "" },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = AppColors.Third
-                        )) {
-                        Text("Tamam",
-                            color = AppColors.Primary)
+                        )
+                    ) {
+                        Text(
+                            "Tamam",
+                            color = AppColors.Primary
+                        )
                     }
                 }
             )
@@ -149,9 +172,9 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
             OutlinedTextField(
                 value = username,
                 onValueChange = onUsernameChange,
-                label = {Text("Kullanıcı Adı")},
+                label = { Text("Kullanıcı Adı") },
                 singleLine = true,
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .fillMaxWidth()
                     .padding(start = 40.dp, end = 40.dp),
                 colors = TextFieldDefaults.colors(
@@ -166,20 +189,21 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
                     focusedIndicatorColor = AppColors.Third
                 )
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.Companion.height(16.dp))
             OutlinedTextField(
                 value = password,
                 onValueChange = onPasswordChange,
-                label = {Text("Şifre")},
+                label = { Text("Şifre") },
                 singleLine = true,
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible) VisualTransformation.Companion.None else PasswordVisualTransformation(),
                 trailingIcon = {
-                    val icon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility
-                    IconButton(onClick = {passwordVisible=!passwordVisible}) {
+                    val icon =
+                        if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(imageVector = icon, contentDescription = null)
                     }
                 },
-                modifier = Modifier
+                modifier = Modifier.Companion
                     .fillMaxWidth()
                     .padding(start = 40.dp, end = 40.dp),
                 colors = TextFieldDefaults.colors(
@@ -193,25 +217,25 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
                     focusedIndicatorColor = AppColors.Third
                 )
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.Companion.height(32.dp))
             Button(
                 onClick = {
                     isLoading = true
                     coroutineScope.launch {
-                        val respond = ApiService.login(username,password)
+                        val respond = ApiService.login(username, password)
 
-                            if (respond.success) {
-                                    onLoginSuccess()
-                                tokenSave.token = respond.message
-                                println("token is: ${respond.message}")
-                            } else if (!respond.success) {
+                        if (respond.success) {
+                            onLoginSuccess()
+                            tokenSave.token = respond.message
+                            println("token is: ${respond.message}")
+                        } else if (!respond.success) {
                             errorMessageAlertDialog = respond.message
                             isLoading = false
-                            }
+                        }
                     }
                 },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                modifier = Modifier.Companion
+                    .align(Alignment.Companion.CenterHorizontally)
                     .padding(top = 24.dp),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = AppColors.Primary)
@@ -219,7 +243,7 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
                 if (isLoading) {
                     CircularProgressIndicator(
                         color = AppColors.Third,
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.Companion.size(24.dp),
                         strokeWidth = 2.dp
                     )
                 } else Text("Giriş Yap")
@@ -228,13 +252,15 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
     }
     @Composable
     public fun LanguageSelectorIcon() { // Dropdown Language Selector
-        var expanded by remember {mutableStateOf(false)}
+        var expanded by remember { mutableStateOf(false) }
 
         Box {
-            IconButton(onClick = {expanded = true},
-                modifier = Modifier
+            IconButton(
+                onClick = { expanded = true },
+                modifier = Modifier.Companion
                     .size(45.dp)
-                    .padding(end = 20.dp)){
+                    .padding(end = 20.dp)
+            ) {
                 Image(
                     painter = getLanguageIcon(),
                     contentDescription = "Language Icon"
@@ -242,19 +268,27 @@ class LoginComponent(componentContext: ComponentContext, private val onLoginSucc
             }
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = {expanded = false},
+                onDismissRequest = { expanded = false },
                 containerColor = AppColors.Third
             ) {
                 DropdownMenuItem(
-                    text = { Text("Türkçe",
-                        color = AppColors.Secondary)},
+                    text = {
+                        Text(
+                            "Türkçe",
+                            color = AppColors.Secondary
+                        )
+                    },
                     onClick = {
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("English",
-                        color = AppColors.Secondary)},
+                    text = {
+                        Text(
+                            "English",
+                            color = AppColors.Secondary
+                        )
+                    },
                     onClick = {
                         expanded = false
                     }

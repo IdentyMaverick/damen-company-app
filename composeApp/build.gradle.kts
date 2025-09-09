@@ -35,6 +35,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("com.kizitonwose.calendar:compose-multiplatform:2.8.0")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
@@ -47,12 +48,14 @@ kotlin {
                 implementation(libs.decompose)
                 implementation(libs.decompose.extensions.compose)
                 // Ktor
-                implementation("io.ktor:ktor-client-core:3.2.2")
-                implementation("io.ktor:ktor-client-content-negotiation:3.2.2")
+                implementation("io.ktor:ktor-client-core:3.2.3")
+                implementation("io.ktor:ktor-client-content-negotiation:3.2.3")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.2")
                 implementation("io.ktor:ktor-client-cio:3.2.2")
                 // Multiplatform Settings
                 implementation("com.russhwolf:multiplatform-settings:1.3.0")
+                implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+                implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
             }
         }
 
@@ -93,8 +96,8 @@ android {
         applicationId = "org.example.nazlican"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "0.1.0-dev"
+        versionCode = 2
+        versionName = "v0.2.0-dev"
     }
     packaging {
         resources {

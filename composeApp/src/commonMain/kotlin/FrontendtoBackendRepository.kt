@@ -9,6 +9,7 @@ import io.ktor.client.statement.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -18,6 +19,14 @@ data class LoginResponse(val success: Boolean, val message: String)
 @Serializable
 data class UserCredentials(val username: String, val password: String)
 
+@Serializable
+data class NewsResponse(val id: Int, val title: String, val content: String, val imageUrl: String)
+
+@Serializable
+data class CalendarsResponse(val id: Int, val title: String, val description: String, val date: String)
+
+@Serializable
+data class FeedbacksResponse(val point: Int, val comment: String)
 object ApiService {
     var onSessionExpired: (() -> Unit)? = null
     val settings = getSettings()
@@ -34,13 +43,38 @@ object ApiService {
                     onSessionExpired?.invoke()
                 }
             }
-    }
+        }
     }
 
     suspend fun login(username: String, password: String): LoginResponse {
-        return client.post("http://10.0.2.2:9090/login") {
+        return client.post("http://192.168.0.246:9090/login") {
             contentType(ContentType.Application.Json)
             setBody(UserCredentials(username, password))
+        }.body()
+    }
+
+    suspend fun news(): List<NewsResponse> {
+        return client.get("http://192.168.0.246:9090/news") {
+            contentType(ContentType.Application.Json)
+        }.body()
+    }
+
+    suspend fun newsSpecific(newsId: Int): NewsResponse {
+        return client.get("http://192.168.0.246:9090/news/$newsId") {
+            contentType(ContentType.Application.Json)
+        }.body()
+    }
+
+    suspend fun calendars(): List<CalendarsResponse> {
+        return client.get("http://192.168.0.246:9090/calendars") {
+            contentType(ContentType.Application.Json)
+        }.body()
+    }
+
+    suspend fun feedbacks(point: Int, comment: String): FeedbacksResponse {
+        return client.post("http://192.168.0.246:9090/feedbacks") {
+            contentType(ContentType.Application.Json)
+            setBody(FeedbacksResponse(point, comment))
         }.body()
     }
 }

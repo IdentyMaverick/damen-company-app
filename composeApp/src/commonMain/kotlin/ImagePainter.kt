@@ -19,3 +19,6 @@ expect fun getImagePainter2(): Painter // Damen Blue Logo Getter
 
 @Composable
 expect fun getLanguageIcon2(): Painter // Damen Blue Logo Getter
+/*
+@Composable
+expect fun getImagePainterUrl(url: String): Painter  // Url Image Getter*/

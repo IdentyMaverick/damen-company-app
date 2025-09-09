@@ -33,3 +33,8 @@ actual fun getImagePainter2(): Painter {
 actual fun getLanguageIcon2(): Painter {
     return painterResource(id = R.drawable.languageiconwhite)
 }
+
+/*@Composable
+actual fun getImagePainterUrl(url: String): Painter {
+    return painterResource(id = )
+}*/
