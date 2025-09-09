@@ -1,5 +1,5 @@
 
-# 📱Damen Company App v0.1.0-dev
+# 📱Damen Company App v0.2.0-dev
 ## Kurumsal Haberleşme & Bilgilendirme Uygulaması
 
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Multiplatform-blueviolet?style=flat&logo=android)
